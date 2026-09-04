@@ -41,8 +41,11 @@ Invoice-Maker/
 ├── style.css
 ├── script.js
 ├── assets/
+│   ├── logo.png
 │   └── ...
-└── README.md
+├── README.md
+├── LICENSE
+└── .gitignore
 ```
 
 > File and folder names may vary depending on the current project version.
