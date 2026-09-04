@@ -279,6 +279,9 @@
     return { createQR };
   })();
 
+  
+ 
+
   // =========================================================================
   // 5. ITEM ROWS MANAGEMENT
   // =========================================================================
@@ -1109,7 +1112,7 @@
       ifsc: 'PUNB0340600',
       upiId: 'mahadeva@upi',
       notes: '1. Payment is officially acknowledged via bank transfer.\n2. Warranty & Support covered for 12 months from deployment date.\nThank you for choosing Mahadeva Creation!',
-      signatoryName: 'Hetkumar Mochi',
+      signatoryName: 'Mochi Het S.',
       signatoryTitle: 'Managing Director',
       signatureImg: 'assets/Sign.png'
     });
@@ -1121,21 +1124,52 @@
     if (confirm('Create a new blank invoice? Any unsaved changes on the current invoice will be cleared.')) {
       document.getElementById('billForm').reset();
       state.items = [{ desc: '', qty: 1, price: 0 }];
+
       state.bizLogo = '';
+      state.signatureImg = '';
+      state.status = '';
+      state.watermarkOpacity = 8;
+      state.showLogoWatermark = false;
+
+      state.bizName = '';
+      state.bizEmail = '';
+      state.bizTaxId = '';
+      state.bizAddr = '';
+
+      state.custName = '';
+      state.custTaxId = '';
+      state.custEmail = '';
+      state.custAddr = '';
+
+      state.discount = '0';
+      state.taxRate = '0';
+      state.shippingFee = '0';
+      state.splitGst = false;
+      state.amountInWords = false;
+      state.showQr = false;
+
+      state.bankName = '';
+      state.acctHolder = '';
+      state.acctNo = '';
+      state.ifsc = '';
+      state.upiId = '';
+
+      state.notes = '';
+      state.signatoryName = '';
+      state.signatoryTitle = '';
+
       logoImg.src = '';
       logoImg.classList.add('hidden');
       logoPlaceholder.classList.remove('hidden');
       removeLogoBtn.classList.add('hidden');
       logoInput.value = '';
-      state.showLogoWatermark = false;
-      state.watermarkOpacity = 8;
-      state.signatureImg = '';
+
       signImg.src = '';
       signImg.classList.add('hidden');
       signPlaceholder.classList.remove('hidden');
       removeSignBtn.classList.add('hidden');
       signInput.value = '';
-      state.status = '';
+
       document.getElementById('billDate').value = new Date().toISOString().split('T')[0];
       document.getElementById('billNo').value = 'INV-' + Date.now().toString().slice(-5);
       renderItemRows();
