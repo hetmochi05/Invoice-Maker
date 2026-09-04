@@ -43,6 +43,8 @@ Invoice-Maker/
 ├── assets/
 │   ├── logo.png
 │   └── ...
+├── favicon/
+│   ├── favicon.png
 ├── README.md
 ├── LICENSE
 └── .gitignore
