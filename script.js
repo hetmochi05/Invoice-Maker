@@ -196,91 +196,48 @@
   // =========================================================================
   // 4. LIGHTWEIGHT PURE-JS SVG QR CODE GENERATOR
   // =========================================================================
-  const QRCodeGenerator = (function () {
+  const QRCodeGenerator = (() => {
+
     function createQR(text) {
       if (!text) return '';
+
       try {
-        const qrMatrix = generateMatrix(text);
-        const size = qrMatrix.length;
-        const cellSize = 4;
-        const totalSize = size * cellSize;
-        let rects = '';
-        for (let r = 0; r < size; r++) {
-          for (let c = 0; c < size; c++) {
-            if (qrMatrix[r][c]) {
-              rects += `<rect x="${c * cellSize}" y="${r * cellSize}" width="${cellSize}" height="${cellSize}" fill="#111827"/>`;
-            }
-          }
+        const qrContainer = document.createElement('div');
+
+        new QRCode(qrContainer, {
+          text: text,
+          width: 70,
+          height: 70,
+          correctLevel: QRCode.CorrectLevel.M
+        });
+
+        const canvas = qrContainer.querySelector('canvas');
+
+        if (canvas) {
+          return `<img src="${canvas.toDataURL('image/png')}" alt="QR Code">`;
         }
-        return `<svg viewBox="0 0 ${totalSize} ${totalSize}" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">${rects}</svg>`;
-      } catch (err) {
+
+        const img = qrContainer.querySelector('img');
+
+        if (img) {
+          return `<img src="${img.src}" alt="QR Code">`;
+        }
+
+        return '';
+
+      } catch (error) {
+        console.error('QR generation failed:', error);
         return '';
       }
     }
 
-    function generateMatrix(input) {
-      const size = 25;
-      const matrix = Array.from({ length: size }, () => Array(size).fill(0));
+    return {
+      createQR
+    };
 
-      function addFinder(top, left) {
-        for (let r = 0; r < 7; r++) {
-          for (let c = 0; c < 7; c++) {
-            if (
-              r === 0 || r === 6 || c === 0 || c === 6 ||
-              (r >= 2 && r <= 4 && c >= 2 && c <= 4)
-            ) {
-              matrix[top + r][left + c] = 1;
-            }
-          }
-        }
-      }
-
-      addFinder(0, 0);
-      addFinder(0, size - 7);
-      addFinder(size - 7, 0);
-
-      const ar = 18, ac = 18;
-      for (let r = -2; r <= 2; r++) {
-        for (let c = -2; c <= 2; c++) {
-          if (Math.abs(r) === 2 || Math.abs(c) === 2 || (r === 0 && c === 0)) {
-            matrix[ar + r][ac + c] = 1;
-          }
-        }
-      }
-
-      for (let i = 8; i < size - 8; i++) {
-        matrix[6][i] = i % 2 === 0 ? 1 : 0;
-        matrix[i][6] = i % 2 === 0 ? 1 : 0;
-      }
-
-      let hash = 0;
-      for (let i = 0; i < input.length; i++) {
-        hash = ((hash << 5) - hash) + input.charCodeAt(i);
-        hash |= 0;
-      }
-
-      let bitIdx = 0;
-      for (let r = 0; r < size; r++) {
-        for (let c = 0; c < size; c++) {
-          if ((r < 8 && c < 8) || (r < 8 && c >= size - 8) || (r >= size - 8 && c < 8)) continue;
-          if (r === 6 || c === 6) continue;
-          if (r >= ar - 2 && r <= ar + 2 && c >= ac - 2 && c <= ac + 2) continue;
-
-          const charCode = input.charCodeAt(bitIdx % input.length) || 42;
-          const isBitSet = ((charCode ^ (r * size + c) ^ hash) & 1) === 1;
-          matrix[r][c] = isBitSet ? 1 : 0;
-          bitIdx++;
-        }
-      }
-
-      return matrix;
-    }
-
-    return { createQR };
   })();
 
-  
- 
+
 
   // =========================================================================
   // 5. ITEM ROWS MANAGEMENT
@@ -440,13 +397,33 @@
     // Dedicated QR Card Generator
     let qrSvgHtml = '';
     if (showQr) {
-      let qrPayload = upiId ? `upi://pay?pa=${upiId}&pn=${encodeURIComponent(bizName)}&am=${grandTotal.toFixed(2)}&cu=${state.currency}` : `Payment for ${billNo} - Total: ${state.currencySymbol}${grandTotal.toFixed(2)}`;
+      let qrPayload;
+      if (upiId) {
+        qrPayload =
+          `upi://pay?` +
+          `pa=${encodeURIComponent(upiId.trim())}` +
+          `&pn=${encodeURIComponent(bizName.trim())}` +
+          `&am=${grandTotal.toFixed(2)}` +
+          `&cu=INR` +
+          `&tn=${encodeURIComponent(`Invoice ${billNo}`)}`;
+      } else {
+        qrPayload =
+          `Payment for ${billNo} - Total: ` +
+          `${state.currencySymbol}${grandTotal.toFixed(2)}`;
+      }
+
       const qrSvg = QRCodeGenerator.createQR(qrPayload);
       if (qrSvg) {
         qrSvgHtml = `
           <div class="pay-qr-card">
             <div class="qr-card-header">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>
+              <svg width="13" height="13" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2.5">
+                <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+                <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+                <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+                <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+              </svg>
               <span>Instant Pay QR</span>
             </div>
             <div class="qr-code-frame">
@@ -456,7 +433,9 @@
               <div class="qr-corner btm-right"></div>
               ${qrSvg}
             </div>
-            <div class="qr-card-amount">${state.currencySymbol}${fmtMoney(grandTotal)}</div>
+            <div class="qr-card-amount">
+              ${state.currencySymbol}${fmtMoney(grandTotal)}
+            </div>
             <div class="qr-card-footer">
               <span class="upi-badge">UPI</span>
               <span>GPay · PhonePe · Paytm</span>
