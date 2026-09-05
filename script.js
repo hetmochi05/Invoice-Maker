@@ -398,7 +398,8 @@
     let qrSvgHtml = '';
     if (showQr) {
       let qrPayload;
-      if (upiId) {
+      //Only generate UPI Payment QR For INR currency with valid UPI ID
+      if (upiId && state.currency === 'INR') {
         qrPayload =
           `upi://pay?` +
           `pa=${encodeURIComponent(upiId.trim())}` +
@@ -407,9 +408,12 @@
           `&cu=INR` +
           `&tn=${encodeURIComponent(`Invoice ${billNo}`)}`;
       } else {
+        //Normal QR for non-INR currencies 
         qrPayload =
           `Payment for ${billNo} - Total: ` +
-          `${state.currencySymbol}${grandTotal.toFixed(2)}`;
+          `${state.currencySymbol}${grandTotal.toFixed(2)}` +
+          `${state.currency}`;
+
       }
 
       const qrSvg = QRCodeGenerator.createQR(qrPayload);
@@ -424,7 +428,8 @@
                 <rect x="14" y="14" width="7" height="7" rx="1"></rect>
                 <rect x="3" y="14" width="7" height="7" rx="1"></rect>
               </svg>
-              <span>Instant Pay QR</span>
+              <span>
+                ${upiId && state.currency === 'INR' ? 'Instant Pay QR' : 'Payment QR'}</span>
             </div>
             <div class="qr-code-frame">
               <div class="qr-corner top-left"></div>
@@ -437,8 +442,13 @@
               ${state.currencySymbol}${fmtMoney(grandTotal)}
             </div>
             <div class="qr-card-footer">
-              <span class="upi-badge">UPI</span>
-              <span>GPay · PhonePe · Paytm</span>
+              ${upiId && state.currency === 'INR' 
+                ? ` <span class="upi-badge">UPI</span>
+                    <span>GPay · PhonePe · Paytm</span> 
+                ` : ` 
+                    <span class="upi-badge">QR</span> 
+                    <span>Scan for payment details</span>
+                `}
             </div>
           </div>
         `;
