@@ -1095,13 +1095,13 @@
       splitGst: true,
       amountInWords: true,
       showQr: true,
-      bankName: 'Punjab National Bank',
+      bankName: 'Your Bank Name',
       acctHolder: 'Mahadeva Creation Pvt Ltd',
-      acctNo: '0340002100012345',
-      ifsc: 'PUNB0340600',
-      upiId: 'mahadeva@upi',
+      acctNo: '123456789012',
+      ifsc: 'yourbankifsc',
+      upiId: 'yourupi@upi',
       notes: '1. Payment is officially acknowledged via bank transfer.\n2. Warranty & Support covered for 12 months from deployment date.\nThank you for choosing Mahadeva Creation!',
-      signatoryName: 'Mochi Het S.',
+      signatoryName: 'Mahadeva Creation',
       signatoryTitle: 'Managing Director',
       signatureImg: 'assets/images/Sign.png'
     });
