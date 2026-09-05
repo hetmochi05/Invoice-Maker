@@ -1080,7 +1080,7 @@
       currency: 'INR',
       accentColor: '#4f46e5',
       status: 'PAID',
-      bizLogo: 'assets/logo.png',
+      bizLogo: 'assets/images/logo.png',
       showLogoWatermark: true,
       watermarkOpacity: 8,
       bizName: 'Mahadeva Creation Pvt. Ltd.',
@@ -1114,7 +1114,7 @@
       notes: '1. Payment is officially acknowledged via bank transfer.\n2. Warranty & Support covered for 12 months from deployment date.\nThank you for choosing Mahadeva Creation!',
       signatoryName: 'Mochi Het S.',
       signatoryTitle: 'Managing Director',
-      signatureImg: 'assets/Sign.png'
+      signatureImg: 'assets/images/Sign.png'
     });
 
     showToast('Loaded complete sample invoice data!', 'success');
